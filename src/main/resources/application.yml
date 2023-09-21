@@ -1,0 +1,29 @@
+server:
+  port: 9015
+
+spring:
+  datasource:
+    url:  jdbc:h2:mem:test
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  sql:
+    init:
+      mode: always
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties.hibernate.show_sql: true
+    properties.hibernate.format_sql: true
+    hibernate:
+      ddl-auto: create
+
+
+  h2:
+    console:
+      enabled: true
+      path: /h2
+
+service:
+  pic-pay:
+      base-url: https://appws.picpay.com
+      ecommerce: /ecommerce/public/payments
