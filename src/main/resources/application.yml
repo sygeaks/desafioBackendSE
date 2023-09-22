@@ -25,5 +25,5 @@ spring:
 
 service:
   pic-pay:
-      base-url: https://appws.picpay.com
+      base-url: http://localhost:8082/
       ecommerce: /ecommerce/public/payments

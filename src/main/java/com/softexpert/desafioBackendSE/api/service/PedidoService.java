@@ -1,5 +1,6 @@
 package com.softexpert.desafioBackendSE.api.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softexpert.desafioBackendSE.api.client.PagamentoClient;
 import com.softexpert.desafioBackendSE.api.dto.*;
 import com.softexpert.desafioBackendSE.api.enums.TipoDescontoEnum;
@@ -21,6 +22,8 @@ public class PedidoService {
     @Autowired
     private PagamentoClient pagamentoClient;
 
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public PedidoResponseDTO calculoPagmantoPorPessoa(PedidoRequestDTO pedidoRequestDTO) {
         if(Objects.isNull(pedidoRequestDTO))
@@ -67,8 +70,12 @@ public class PedidoService {
 
     public PagamentoResponseDTO getLinkPagamento(PagamentoRequest pagament) {
         PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO();
+        String response;
+
         try {
-            pagamentoResponseDTO= pagamentoClient.payments("",pagament);
+            response= pagamentoClient.payments("",pagament);
+            pagamentoResponseDTO = objectMapper.readValue(response, PagamentoResponseDTO.class);
+
         }catch (Exception e) {
             throw new BusinessException("Error in getLinkPagamento");
         }

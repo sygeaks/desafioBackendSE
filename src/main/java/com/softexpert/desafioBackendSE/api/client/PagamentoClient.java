@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(value = "pagamentoClient", url = "${service.pic-pay.base-url}")
 public interface PagamentoClient {
     @PostMapping("${service.pic-pay.ecommerce}")
-    PagamentoResponseDTO payments(@RequestHeader("x-picpay-token") String picpayToken,
+    String payments(@RequestHeader("x-picpay-token") String picpayToken,
                                    @RequestBody PagamentoRequest requestDTO);
 }

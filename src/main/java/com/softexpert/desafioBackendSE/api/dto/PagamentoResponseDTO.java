@@ -7,5 +7,8 @@ public class PagamentoResponseDTO {
 
     private String referenceId;
     private String paymentUrl;
-    private Qrcode qrcode;
+    //private Qrcode qrcode;
+    //private String expiresAt;
+
+
 }

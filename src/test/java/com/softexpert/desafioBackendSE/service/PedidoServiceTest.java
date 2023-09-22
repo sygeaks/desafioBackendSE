@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -128,13 +129,28 @@ public class PedidoServiceTest {
 
     @Test
     void getLinkPagamentoTest(){
-
-        Mockito.when(pagamentoClient.payments(Mockito.anyString(),Mockito.any(PagamentoRequest.class))).thenReturn(Mockito.any(PagamentoResponseDTO.class));
-        PagamentoResponseDTO responseDTO = pedidoService.getLinkPagamento(Mockito.any(PagamentoRequest.class));
+        String token = "123";
+        PagamentoRequest pagamentoRequest = new PagamentoRequest();
+        Mockito.when(pagamentoClient.payments(token,pagamentoRequest)).thenReturn(Mockito.any(PagamentoResponseDTO.class));
+        PagamentoResponseDTO responseDTO = pedidoService.getLinkPagamento(pagamentoRequest);
 
         Mockito.verify(pagamentoClient.payments(Mockito.anyString(),Mockito.any(PagamentoRequest.class)));
         Assertions.assertNotNull(responseDTO);
     }
 
+    @Test
+    void Teste2(){
+        PedidoRequestDTO pedidoRequestDTO = new PedidoRequestDTO();
+        PedidoDTO pedidoDTO = new PedidoDTO(21, "Marcio");
+        TaxaDTO taxaDTO = new TaxaDTO(1.2);
+        DescontoDTO descontoDTO = new DescontoDTO(1.3,TipoDescontoEnum.PERCENTUAL);
+        pedidoRequestDTO.setPedido(Arrays.asList(pedidoDTO));
+        pedidoRequestDTO.setTaxa(Arrays.asList(taxaDTO));
+        pedidoRequestDTO.setDesconto(Arrays.asList(descontoDTO));
+
+       PedidoResponseDTO responseDTO = pedidoService.gerarDistribuicaoValores( pedidoRequestDTO);
+
+       Assertions.assertNotNull(responseDTO);
+    }
 
 }
