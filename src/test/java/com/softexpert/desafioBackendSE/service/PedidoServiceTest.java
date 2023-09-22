@@ -1,5 +1,6 @@
 package com.softexpert.desafioBackendSE.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softexpert.desafioBackendSE.api.client.PagamentoClient;
 import com.softexpert.desafioBackendSE.api.dto.*;
 import com.softexpert.desafioBackendSE.api.enums.TipoDescontoEnum;
@@ -37,7 +38,8 @@ public class PedidoServiceTest {
     @Mock
     private PagamentoClient pagamentoClient;
 
-
+    @Mock
+    private ObjectMapper objectMapper;
 
     @Test
     void calcularTaxasTest(){
@@ -71,6 +73,7 @@ public class PedidoServiceTest {
         double valorDesconto = pedidoService.calcularValorDesconto( pedidoRequestDTO,  totalPedido);
 
         Assertions.assertNotNull(valorDesconto);
+
     }
 
 
@@ -107,14 +110,29 @@ public class PedidoServiceTest {
 
         DescontoDTO desconto = new DescontoDTO();
         desconto.setTipo(TipoDescontoEnum.VALOR_REAL);
-        desconto.setValor(1.4);
+        desconto.setValor(20.0);
 
         Double valorTotal = 12.56;
 
         double  valorDesconto =  pedidoService.calculaValorDesconto( desconto,  valorTotal);
 
         Assertions.assertNotNull(valorDesconto);
+        Assertions.assertEquals(valorDesconto, 20.0);
 
+    }
+
+    @Test
+    void getLinkPagamentoTest(){
+
+        String result = "{\"referenceId\": \"102039\",\"paymentUrl\": \"https://app.picpay.com/checkout/NWZkOTFjZTA4.....ZWJmM2QxMzA2\"}";
+        String token = "123";
+        PagamentoRequest pagamentoRequest = new PagamentoRequest();
+        Mockito.when(pagamentoClient.payments(Mockito.any(),Mockito.any(PagamentoRequest.class))).thenReturn(result);
+        pedidoService.setObjectMapper(new ObjectMapper());
+        PagamentoResponseDTO responseDTO = pedidoService.getLinkPagamento(pagamentoRequest);
+
+        Assertions.assertNotNull(responseDTO);
+        Assertions.assertEquals("102039", responseDTO.getReferenceId());
     }
 
     @Test
@@ -126,17 +144,7 @@ public class PedidoServiceTest {
         Mockito.when(produtoRepository.findById(codigoProduto)).thenReturn(produto);
         Produto response = pedidoService.recuperaProduto( codigoProduto);
     }
-
-    @Test
-    void getLinkPagamentoTest(){
-        String token = "123";
-        PagamentoRequest pagamentoRequest = new PagamentoRequest();
-        Mockito.when(pagamentoClient.payments(token,pagamentoRequest)).thenReturn(Mockito.any(PagamentoResponseDTO.class));
-        PagamentoResponseDTO responseDTO = pedidoService.getLinkPagamento(pagamentoRequest);
-
-        Mockito.verify(pagamentoClient.payments(Mockito.anyString(),Mockito.any(PagamentoRequest.class)));
-        Assertions.assertNotNull(responseDTO);
-    }
+    
 
     @Test
     void Teste2(){
