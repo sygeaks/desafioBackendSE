@@ -41,6 +41,8 @@ public class PedidoService {
 
         Double valorTaxas =  this.calcularTaxas(pedidoRequestDTO);
 
+
+
         Double totalPagamento = totalPedido + valorTaxas - valorDesconto;
 
         List<PedidoResponse> pedidosResponse = produtosPorIntegrante.entrySet()
