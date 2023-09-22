@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softexpert.desafioBackendSE.api.client.PagamentoClient;
 import com.softexpert.desafioBackendSE.api.dto.*;
 import com.softexpert.desafioBackendSE.api.enums.TipoDescontoEnum;
+import com.softexpert.desafioBackendSE.api.exception.BusinessException;
 import com.softexpert.desafioBackendSE.api.model.Produto;
 import com.softexpert.desafioBackendSE.api.repository.ProdutoRepository;
 import com.softexpert.desafioBackendSE.api.service.PedidoService;
@@ -40,6 +41,34 @@ public class PedidoServiceTest {
 
     @Mock
     private ObjectMapper objectMapper;
+
+
+    @Test
+    public void recuperaProdutoTest() {
+
+        Integer codigoProduto = 123;
+        Produto produtoEsperado = new Produto();
+
+        Mockito.when(produtoService.findById(codigoProduto)).thenReturn(Optional.of(produtoEsperado));
+
+        Produto produtoRetornado = pedidoService.recuperaProduto(codigoProduto);
+        Assertions.assertNotNull(produtoRetornado);
+        Assertions.assertEquals(produtoEsperado, produtoRetornado);
+    }
+
+    @Test
+    public void recuperaProdutoNaoEncontradoTest() {
+
+        Integer codigoProduto = 456;
+
+        Mockito.when(produtoService.findById(codigoProduto)).thenReturn(Optional.empty());
+
+        BusinessException exception = Assertions.assertThrows(BusinessException.class, () -> {
+            pedidoService.recuperaProduto(codigoProduto);
+        });
+
+        Assertions.assertEquals("Produto não encontrado. Codigo: " + codigoProduto, exception.getMessage());
+    }
 
     @Test
     void calcularTaxasTest(){
@@ -135,18 +164,6 @@ public class PedidoServiceTest {
         Assertions.assertEquals("102039", responseDTO.getReferenceId());
     }
 
-    @Test
-    void Teste(){
-        Integer codigoProduto = 21;
-        Optional<Produto> produto = Optional.empty();
-
-        Mockito.when(produtoService.findById(codigoProduto)).thenReturn(produto);
-        Mockito.when(produtoRepository.findById(codigoProduto)).thenReturn(produto);
-        Produto response = pedidoService.recuperaProduto( codigoProduto);
-    }
-    
-
-    @Test
     void Teste2(){
         PedidoRequestDTO pedidoRequestDTO = new PedidoRequestDTO();
         PedidoDTO pedidoDTO = new PedidoDTO(21, "Marcio");
@@ -156,9 +173,11 @@ public class PedidoServiceTest {
         pedidoRequestDTO.setTaxa(Arrays.asList(taxaDTO));
         pedidoRequestDTO.setDesconto(Arrays.asList(descontoDTO));
 
-       PedidoResponseDTO responseDTO = pedidoService.gerarDistribuicaoValores( pedidoRequestDTO);
+        PedidoResponseDTO responseDTO = pedidoService.gerarDistribuicaoValores( pedidoRequestDTO);
 
-       Assertions.assertNotNull(responseDTO);
+        Assertions.assertNotNull(responseDTO);
     }
+
+
 
 }
