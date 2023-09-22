@@ -17,10 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -179,5 +176,31 @@ public class PedidoServiceTest {
     }
 
 
+    @Test
+   void calculaValorIndividualTest() {
+        List<Produto> produtos = Arrays.asList(
+                new Produto(21, "Produto1", 10.0),
+                new Produto(22, "Produto2", 20.0),
+                new Produto(23, "Produto3", 30.0)
+        );
+        Map.Entry<String, List<Produto>> entry = new AbstractMap.SimpleEntry<>("Chave", produtos);
+
+        Double atual = pedidoService.calculaValorIndividual(entry);
+        Double esperado = 10.0 + 20.0 + 30.0;
+        Assertions.assertEquals(esperado, atual);
+    }
+
+    @Test
+   void calcularValorTotalPedidoCompraTest() {
+
+        Map<String, List<Produto>> produtosPorIntegrante = new HashMap<>();
+        produtosPorIntegrante.put("Integrante1", Arrays.asList(new Produto(21,"Produto1", 10.0), new Produto(23,"Produto3", 20.0)));
+        produtosPorIntegrante.put("Integrante2", Arrays.asList(new Produto(22,"Produto2", 15.0), new Produto(21, "Produto1", 25.0)));
+
+        Double esperado = 10.0 + 20.0 + 15.0 + 25.0;
+
+        Double totalPedidoAtual = pedidoService.calcularValorTotalPedidoCompra(produtosPorIntegrante);
+        Assertions.assertEquals(esperado, totalPedidoAtual);
+    }
 
 }
