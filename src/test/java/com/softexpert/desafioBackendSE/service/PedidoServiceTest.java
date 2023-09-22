@@ -1,9 +1,7 @@
 package com.softexpert.desafioBackendSE.service;
 
-import com.softexpert.desafioBackendSE.api.dto.DescontoDTO;
-import com.softexpert.desafioBackendSE.api.dto.PedidoRequestDTO;
-import com.softexpert.desafioBackendSE.api.dto.PedidoResponseDTO;
-import com.softexpert.desafioBackendSE.api.dto.TaxaDTO;
+import com.softexpert.desafioBackendSE.api.client.PagamentoClient;
+import com.softexpert.desafioBackendSE.api.dto.*;
 import com.softexpert.desafioBackendSE.api.enums.TipoDescontoEnum;
 import com.softexpert.desafioBackendSE.api.model.Produto;
 import com.softexpert.desafioBackendSE.api.repository.ProdutoRepository;
@@ -33,7 +31,12 @@ public class PedidoServiceTest {
     private ProdutoService produtoService;
 
     @Mock
-   private ProdutoRepository produtoRepository;
+    private ProdutoRepository produtoRepository;
+
+    @Mock
+    private PagamentoClient pagamentoClient;
+
+
 
     @Test
     void calcularTaxasTest(){
@@ -121,6 +124,16 @@ public class PedidoServiceTest {
         Mockito.when(produtoService.findById(codigoProduto)).thenReturn(produto);
         Mockito.when(produtoRepository.findById(codigoProduto)).thenReturn(produto);
         Produto response = pedidoService.recuperaProduto( codigoProduto);
+    }
+
+    @Test
+    void getLinkPagamentoTest(){
+
+        Mockito.when(pagamentoClient.payments(Mockito.anyString(),Mockito.any(PagamentoRequest.class))).thenReturn(Mockito.any(PagamentoResponseDTO.class));
+        PagamentoResponseDTO responseDTO = pedidoService.getLinkPagamento(Mockito.any(PagamentoRequest.class));
+
+        Mockito.verify(pagamentoClient.payments(Mockito.anyString(),Mockito.any(PagamentoRequest.class)));
+        Assertions.assertNotNull(responseDTO);
     }
 
 

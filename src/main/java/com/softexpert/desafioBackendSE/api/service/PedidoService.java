@@ -65,9 +65,13 @@ public class PedidoService {
         return response;
     }
 
-    private PagamentoResponseDTO getLinkPagamento(PagamentoRequest pagament) {
+    public PagamentoResponseDTO getLinkPagamento(PagamentoRequest pagament) {
         PagamentoResponseDTO pagamentoResponseDTO = new PagamentoResponseDTO();
-        pagamentoResponseDTO= pagamentoClient.payments("",pagament);
+        try {
+            pagamentoResponseDTO= pagamentoClient.payments("",pagament);
+        }catch (Exception e) {
+            throw new BusinessException("Error in getLinkPagamento");
+        }
         return pagamentoResponseDTO;
 
     }
